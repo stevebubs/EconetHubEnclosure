@@ -124,7 +124,7 @@ module generate_Econet_Lid() {
     
 };
 
-module generate_screw_mounts() {
+module generate_side_screw_mounts() {
     difference() {
         union(){        
             translate([(box_width/2)-10,-10,0])
@@ -139,13 +139,38 @@ module generate_screw_mounts() {
         translate([(box_width/2),box_depth+10,-5])
             cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);   
     };
+};
+
+module generate_end_screw_mounts() {
+    difference() {
+        union(){        
+            translate([-10,(box_depth/2)-10,0])
+                cube([box_width+20,20,topbottom_thickness]);
+            translate([-10,box_depth/2,0])
+                cylinder(h=topbottom_thickness,r=10,center=false,$fn=facets);    
+            translate([box_width+10,box_depth/2,0])
+                cylinder(h=topbottom_thickness,r=10,center=false,$fn=facets);   
+        }; 
+        translate([-10,box_depth/2,-5])
+            cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);    
+        translate([(box_width+10),box_depth/2,-5])
+            cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);   
+    };
 
 };
+
+
+
 union(){
     generate_Econet_Enclosure();
-    generate_screw_mounts();
+    generate_end_screw_mounts();
+    generate_side_screw_mounts();
 };
-
+/*
 translate([0,0,100])
+union(){
    generate_Econet_Lid();
-
+    generate_end_screw_mounts();
+    generate_side_screw_mounts();
+};
+*/
