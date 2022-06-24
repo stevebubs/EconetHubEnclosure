@@ -124,7 +124,28 @@ module generate_Econet_Lid() {
     
 };
 
-generate_Econet_Enclosure();
+module generate_screw_mounts() {
+    difference() {
+        union(){        
+            translate([(box_width/2)-10,-10,0])
+                cube([20,box_depth+20,topbottom_thickness]);
+            translate([(box_width/2),-10,0])
+                cylinder(h=topbottom_thickness,r=10,center=false,$fn=facets);    
+            translate([(box_width/2),box_depth+10,0])
+                cylinder(h=topbottom_thickness,r=10,center=false,$fn=facets);   
+        }; 
+        translate([(box_width/2),-10,-5])
+            cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);    
+        translate([(box_width/2),box_depth+10,-5])
+            cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);   
+    };
+
+};
+union(){
+    generate_Econet_Enclosure();
+    generate_screw_mounts();
+};
+
 translate([0,0,100])
    generate_Econet_Lid();
 
