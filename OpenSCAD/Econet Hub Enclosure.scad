@@ -15,7 +15,7 @@ RJ45_Width=15;
 RJ45_Height=13;
 
 wall_thickness=2;
-topbottom_thickness=4;
+topbottom_thickness=2;
 
 DIN_Height=topbottom_thickness+PCB_StandOff+(PCB_Height/2)+1;
 
@@ -112,11 +112,39 @@ module create_holes(RJ45) {
     
 };
 
-module generate_Econet_Enclosure(){
+module generate_Econet_Enclosure_screwlid(){
     difference(){
         create_enclosure(box_width,box_depth,box_height,wall_thickness,topbottom_thickness,screw_offset,PCB_StandOff,-1);
         create_holes(true);
     };
+};
+
+module generate_Econet_Enclosure(){
+    difference(){
+        union(){
+            create_enclosure(box_width,box_depth,box_height+3,wall_thickness,topbottom_thickness,screw_offset,PCB_StandOff,-1);
+            translate([0,2,box_height-2])
+                cube([box_width,3,5]);
+            translate([0,box_depth-5,box_height-2])
+                cube([box_width,3,5]);
+        };
+        create_holes(true);
+        translate([-1,-1,box_height-1])
+            cube([box_width+2,3,5]);
+        translate([-1,box_depth-2,box_height-1])
+            cube([box_width+2,3,5]);
+/*        translate([15,box_depth-6,box_height-3])
+            cube([box_width-30,3,8]);
+        translate([15,3,box_height-3])
+            cube([box_width-30,3,8]);
+*/    };
+        translate([0,2,box_height+1])
+            rotate([0,90,0])
+                cylinder(h=box_width,r=1,center = false, $fn = facets);
+        translate([0,box_depth-2,box_height+1])
+            rotate([0,90,0])
+                cylinder(h=box_width,r=1,center = false, $fn = facets);
+
 };
 
 module generate_Econet_Lid() {
@@ -164,12 +192,12 @@ module generate_end_screw_mounts() {
 union(){
     generate_Econet_Enclosure();
     generate_end_screw_mounts();
-    generate_side_screw_mounts();
+//    generate_side_screw_mounts();
 };
-
+/*
 translate([0,0,100])
 union(){
    generate_Econet_Lid();
     generate_end_screw_mounts();
     generate_side_screw_mounts();
-};
+};*/
