@@ -96,7 +96,7 @@ module create_holes(RJ45) {
         translate([(box_width/2)+10,5,DIN_Height])
             rotate([270,0,0])
                 cylinder(h=box_depth,r=DIN_Radius,center = false, $fn = facets);
-        translate([(box_width/2)-17,-5,topbottom_thickness+PCB_StandOff+PCB_Thickness])
+        translate([(box_width/2)-15.5,-5,topbottom_thickness+PCB_StandOff+PCB_Thickness])
             cube([RJ45_Width,20,RJ45_Height]);
         translate([(box_width/2)+4,-5,topbottom_thickness+PCB_StandOff+PCB_Thickness])
             cube([RJ45_Width,20,RJ45_Height]);
@@ -159,18 +159,17 @@ module generate_end_screw_mounts() {
 
 };
 
-
+// Comment out what you don't want to generate //
 
 union(){
     generate_Econet_Enclosure();
     generate_end_screw_mounts();
     generate_side_screw_mounts();
 };
-/*
+
 translate([0,0,100])
 union(){
    generate_Econet_Lid();
     generate_end_screw_mounts();
     generate_side_screw_mounts();
 };
-*/
