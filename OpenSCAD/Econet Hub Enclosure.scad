@@ -13,6 +13,7 @@ PCB_StandOff=3;
 DIN_Radius=9;
 RJ45_Width=15;
 RJ45_Height=13;
+RJ45_present=true; // set to false if generating for DIN-only hub
 
 wall_thickness=2;
 topbottom_thickness=3;
@@ -32,34 +33,35 @@ module render_dot(x,y,radius,spacing,height) {
 };
 
 module render_row(row_num,dot_array,radius,spacing,height) {
-for (a=dot_array) {
-        render_dot(a,row_num,radius,spacing,height);
+    for (a=dot_array) {
+            render_dot(a,row_num,radius,spacing,height);
+    };
 };
-};
+
+// render the Owl...
 
 module render_owl(radius,spacing,height) {
-
-render_row(1,[1,3,5,7,9,11,13,15,17],radius,spacing,height);
-render_row(2,[2,8,10,16],radius,spacing,height);
-render_row(3,[1,5,9,13,17],radius,spacing,height);
-render_row(4,[4,6,12,14],radius,spacing,height);
-render_row(5,[1,5,13,17],radius,spacing,height);
-render_row(6,[2,8,10,16],radius,spacing,height);
-render_row(7,[1,3,9,15,17],radius,spacing,height);
-render_row(8,[2,4,14],radius,spacing,height);
-render_row(9,[1,3,5,7,9,11,13,17],radius,spacing,height);
-render_row(10,[2,4,6,8],radius,spacing,height);
-render_row(11,[1,3,5,7,9,17],radius,spacing,height);
-render_row(12,[2,4,6,8],radius,spacing,height);
-render_row(13,[3,5,7,9,17],radius,spacing,height);
-render_row(14,[4,6,8,10],radius,spacing,height);
-render_row(15,[5,7,9,11,17],radius,spacing,height);
-render_row(16,[6,8,10,12],radius,spacing,height);
-render_row(17,[7,9,11,13,17],radius,spacing,height);
-render_row(18,[8,12,14],radius,spacing,height);
-render_row(19,[7,11,15,17],radius,spacing,height);
-render_row(20,[2,4,6,8,10,16],radius,spacing,height);
-render_row(21,[17],radius,spacing,height);
+    render_row(1,[1,3,5,7,9,11,13,15,17],radius,spacing,height);
+    render_row(2,[2,8,10,16],radius,spacing,height);
+    render_row(3,[1,5,9,13,17],radius,spacing,height);
+    render_row(4,[4,6,12,14],radius,spacing,height);
+    render_row(5,[1,5,13,17],radius,spacing,height);
+    render_row(6,[2,8,10,16],radius,spacing,height);
+    render_row(7,[1,3,9,15,17],radius,spacing,height);
+    render_row(8,[2,4,14],radius,spacing,height);
+    render_row(9,[1,3,5,7,9,11,13,17],radius,spacing,height);
+    render_row(10,[2,4,6,8],radius,spacing,height);
+    render_row(11,[1,3,5,7,9,17],radius,spacing,height);
+    render_row(12,[2,4,6,8],radius,spacing,height);
+    render_row(13,[3,5,7,9,17],radius,spacing,height);
+    render_row(14,[4,6,8,10],radius,spacing,height);
+    render_row(15,[5,7,9,11,17],radius,spacing,height);
+    render_row(16,[6,8,10,12],radius,spacing,height);
+    render_row(17,[7,9,11,13,17],radius,spacing,height);
+    render_row(18,[8,12,14],radius,spacing,height);
+    render_row(19,[7,11,15,17],radius,spacing,height);
+    render_row(20,[2,4,6,8,10,16],radius,spacing,height);
+    render_row(21,[17],radius,spacing,height);
 };
 
 // generate an open box
@@ -76,44 +78,36 @@ module create_openbox(width,depth,height,wall,base_thickness) {
 
 module create_enclosure(width,depth,height,wall_thickness,base_thickness,screw_offset,standoff_height,screwhole_offset) {
 
-difference() {
-    union() {
-        create_openbox(width,depth,height,wall_thickness,base_thickness);
-
-        //standoffs
-        
-        translate([screw_offset,screw_offset,0])  
-            cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
-        
-        translate([screw_offset,depth-screw_offset,0])  
-            cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
-        
-        translate([width-screw_offset,depth-screw_offset,0])  
-            cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
-
-        translate([width-screw_offset,screw_offset,0]) 
-            cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
-    } 
+    difference() {
+        union() {
+            
+            //generate box
+            create_openbox(width,depth,height,wall_thickness,base_thickness);
     
-    // screw holes in standoffs
-    
-    {
+            //standoffs
+            translate([screw_offset,screw_offset,0])  
+                cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
+            translate([screw_offset,depth-screw_offset,0])  
+                cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
+            translate([width-screw_offset,depth-screw_offset,0])  
+                cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
+            translate([width-screw_offset,screw_offset,0]) 
+                cylinder(h = standoff_height+(base_thickness), r = 4, center = false, $fn = facets);
+        }; 
+        
+        // create screw holes in standoffs
         translate([screw_offset,screw_offset,screwhole_offset])
             cylinder(h = standoff_height+(base_thickness+2), r = 1, $fn = facets);
-        
         translate([screw_offset,depth-screw_offset,screwhole_offset]) 
             cylinder(h = standoff_height+(base_thickness+2), r = 1, $fn = facets);
-        
         translate([width-screw_offset,depth-screw_offset,screwhole_offset])
             cylinder(h = standoff_height+(base_thickness+2), r = 1, $fn = facets);
         translate([width-screw_offset,screw_offset,screwhole_offset])
-        
             cylinder(h = standoff_height+(base_thickness+2), r = 1, $fn = facets);
-        };        
     };
 }
 
-module create_holes(RJ45) {
+module create_ports(RJ45) {
     
     // If we don't have RJ45 ports, assuming the DIN ports are opposite each other?
     if (RJ45==false) {
@@ -152,7 +146,7 @@ module create_holes(RJ45) {
 module generate_Econet_Enclosure(){
     difference(){
         create_enclosure(box_width,box_depth,box_height+3,wall_thickness,topbottom_thickness,screw_offset,PCB_StandOff,-1);
-        create_holes(true);
+        create_ports(RJ45_present);
         translate([1,1,box_height-1.5])
             cube([box_width-2,box_depth-2,6]);
         translate([-1,box_depth/2,box_height])
@@ -199,16 +193,16 @@ module generate_Econet_Lid() {
 module generate_side_screw_mounts() {
     difference() {
         union(){        
-            translate([(box_width/2)-10,-10,0])
+            translate([(box_width/2)-10,-9,0])
                 cube([20,box_depth+20,topbottom_thickness]);
-            translate([(box_width/2),-10,0])
+            translate([(box_width/2),-9,0])
                 cylinder(h=topbottom_thickness+1,r=10,center=false,$fn=facets);    
-            translate([(box_width/2),box_depth+10,0])
+            translate([(box_width/2),box_depth+9,0])
                 cylinder(h=topbottom_thickness+1,r=10,center=false,$fn=facets);   
         }; 
-        translate([(box_width/2),-10,-5])
+        translate([(box_width/2),-9,-5])
             cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);    
-        translate([(box_width/2),box_depth+10,-5])
+        translate([(box_width/2),box_depth+9,-5])
             cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);   
     };
 };
@@ -223,9 +217,9 @@ module generate_end_screw_mounts() {
             translate([box_width+9,box_depth/2,0])
                 cylinder(h=topbottom_thickness+1,r=10,center=false,$fn=facets);   
         }; 
-        translate([-10,box_depth/2,-5])
+        translate([-9,box_depth/2,-5])
             cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);    
-        translate([(box_width+10),box_depth/2,-5])
+        translate([(box_width+9),box_depth/2,-5])
             cylinder(h=topbottom_thickness+20,r=2,center=false,$fn=facets);   
     };
 
@@ -241,5 +235,5 @@ union(){
 
 translate([1,1,box_height-1.5+20])
 union(){
-   generate_Econet_Lid();
+    generate_Econet_Lid();
 };
